@@ -31,10 +31,13 @@
   (println (str "Successful connections: " (count (filter (complement lamina.core/closed?)
                                                     channels))))
 
+  ; MEMORY LEEK!
   ; Wait on channels to exit
-  (->> (apply lamina.core/merge-channels channels)
-       (partial lamina.core/wait-for-message)
-       (while true)))
+  ; (->> (apply lamina.core/merge-channels channels)
+  ;      (partial lamina.core/wait-for-message)
+  ;      (while true)))
+
+  )
 
 (defn -main
   "I don't do a whole lot ... yet."
