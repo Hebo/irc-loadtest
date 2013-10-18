@@ -14,7 +14,7 @@ FIXME: explanation
 
     or
 
-    lein run -- -h irc.host.com -p 6667 "NICK myusername" "JOIN #testchannel"
+    lein run -- -h irc.host.com -p 6667 -c 2 "NICK myusername" "JOIN #testchannel"
 
 ## Options
 
