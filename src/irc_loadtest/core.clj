@@ -30,7 +30,7 @@
   (println "Client" id "connecting!")
   (let [ch (connect conn-opts)]
     (lamina/receive-all ch handle-line)
-    (lamina/on-closed ch handle-close)
+    (lamina/on-closed ch (partial handle-close id))
     (apply lamina/enqueue ch msgs)
     ch))
 
