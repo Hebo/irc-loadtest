@@ -23,6 +23,7 @@
 (defn handle-close
   [id]
   (println "Client" id "disconnected. Reconnecting...")
+  (Thread/sleep 200)
   (connect-and-send id @connect-opts @connect-msgs))
 
 (defn connect-and-send
