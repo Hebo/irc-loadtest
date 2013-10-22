@@ -5,6 +5,10 @@
             [gloss.core :as gloss]
             [clojure.tools.cli :refer [cli]]))
 
+(declare connect-and-send)
+(def ^:private connect-opts (atom {}))
+(def ^:private connect-msgs (atom '()))
+
 (defn connect
   [opts]
   (lamina/wait-for-result
@@ -13,15 +17,13 @@
                      :frame (gloss/string :utf-8 :delimiters ["\n" "\r\n"])})))
 
 (defn handle-line
-    "Handle lines
-    TODO: respond to pings"
-    [line]
-    ; (println line))
-    )
+  "Handle lines"
+  [line])
 
 (defn handle-close
-  []
-  (println "channel closed!"))
+  [id]
+  (println "Client" id "disconnected. Reconnecting...")
+  (connect-and-send id @connect-opts @connect-msgs))
 
 (defn connect-and-send
   [id conn-opts msgs]
@@ -36,10 +38,12 @@
   "I don't do a whole lot ... yet."
   [& args]
   (let [[opts msgs & _] (cli args
-                ["-p" "--port" "Listen on this port" :parse-fn #(Integer. %)]
-                ["-h" "--host" "The hostname"]
-                ["-c" "--clients" "Number of clients" :default 1 :parse-fn #(Integer. %)])]
-    (dotimes [n (:clients opts)]
-                    (Thread/sleep 1000)
-                    (connect-and-send n opts msgs))
-    (println "Connections done!")))
+                             ["-p" "--port" "Listen on this port" :parse-fn #(Integer. %)]
+                             ["-h" "--host" "The hostname"]
+                             ["-c" "--clients" "Number of clients" :default 1 :parse-fn #(Integer. %)])]
+    (reset! connect-opts opts)
+    (reset! connect-msgs msgs))
+  (dotimes [n (:clients @connect-opts)]
+    (Thread/sleep 200)
+    (connect-and-send n @connect-opts @connect-msgs))
+  (println "Connections done!"))
